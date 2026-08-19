@@ -1,0 +1,118 @@
+# A five-node DistKV cluster. Each node gets its own volume for its
+# write-ahead log and snapshots, so `docker compose restart` exercises the
+# real crash-recovery path rather than starting from scratch.
+#
+#   docker compose up --build -d
+#   docker compose exec node1 distkv-cli -endpoints node1:7070 put city kathmandu
+#   docker compose exec node1 distkv-cli -endpoints node1:7070 get city
+#
+# The console comes up with it, on http://localhost:8080 — the same view of
+# the cluster, plus the ability to break it on purpose.
+#
+# Killing a minority keeps the cluster serving:
+#   docker compose stop node1 node2
+#   docker compose exec node3 distkv-cli -endpoints node3:7070 get city
+
+# Each node's gRPC port is published on loopback only, so distkv-cli can
+# reach it from this machine and nothing else can. The KV API has no
+# authentication of any kind: on a host with a public address, binding
+# these to 0.0.0.0 would hand anybody who found it unrestricted write
+# access to the store, going around every limit the console applies.
+# The console's own port is the one that is meant to be public.
+
+# Shared settings. Each service supplies its own -id; every node is given
+# the full peer list, including itself, and derives its peers from it.
+x-node: &node
+  build: .
+  restart: unless-stopped
+  networks: [distkv]
+
+services:
+  node1:
+    <<: *node
+    command:
+      - -id=node1
+      - -peers=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -listen=:7070
+      - -data-dir=/var/lib/distkv
+      - -verbose
+    ports: ["127.0.0.1:7071:7070"]
+    volumes: [node1-data:/var/lib/distkv]
+
+  node2:
+    <<: *node
+    command:
+      - -id=node2
+      - -peers=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -listen=:7070
+      - -data-dir=/var/lib/distkv
+      - -verbose
+    ports: ["127.0.0.1:7072:7070"]
+    volumes: [node2-data:/var/lib/distkv]
+
+  node3:
+    <<: *node
+    command:
+      - -id=node3
+      - -peers=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -listen=:7070
+      - -data-dir=/var/lib/distkv
+      - -verbose
+    ports: ["127.0.0.1:7073:7070"]
+    volumes: [node3-data:/var/lib/distkv]
+
+  node4:
+    <<: *node
+    command:
+      - -id=node4
+      - -peers=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -listen=:7070
+      - -data-dir=/var/lib/distkv
+      - -verbose
+    ports: ["127.0.0.1:7074:7070"]
+    volumes: [node4-data:/var/lib/distkv]
+
+  node5:
+    <<: *node
+    command:
+      - -id=node5
+      - -peers=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -listen=:7070
+      - -data-dir=/var/lib/distkv
+      - -verbose
+    ports: ["127.0.0.1:7075:7070"]
+    volumes: [node5-data:/var/lib/distkv]
+
+  # The console: an HTTP gateway in front of the five nodes, serving the
+  # browser UI built into the same image. It holds no state — everything
+  # it shows it asked a node for a fraction of a second earlier — so it can
+  # be restarted at any time without consequence.
+  #
+  # It reaches the nodes on the internal network by container name, which
+  # is also why the leader redirects it follows resolve correctly: the
+  # addresses in -peers are the ones a redirect names.
+  console:
+    build: .
+    restart: unless-stopped
+    networks: [distkv]
+    entrypoint: distkv-gateway
+    command:
+      - -listen=:8080
+      - -nodes=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -web=/srv/console
+      # Put the cluster back together if somebody breaks it and wanders
+      # off. Without this the first visitor to partition the cluster
+      # leaves it broken for everybody after them.
+      - -auto-heal=5m
+    ports: ["8080:8080"]
+    depends_on: [node1, node2, node3, node4, node5]
+
+networks:
+  distkv:
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
+  node4-data:
+  node5-data:
