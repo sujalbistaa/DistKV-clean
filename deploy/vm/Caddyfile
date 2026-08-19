@@ -1,0 +1,15 @@
+# Caddy in front of the console. It obtains and renews a certificate on its
+# own; there is nothing else to configure.
+
+{$DISTKV_DOMAIN} {
+	encode zstd gzip
+
+	reverse_proxy console:8080 {
+		# The console holds a server-sent-events stream open indefinitely.
+		# Caddy streams responses correctly by default and applies no read
+		# timeout of its own, so the only thing needed here is to make sure
+		# nothing buffers the response — flush_interval -1 disables
+		# buffering outright, which is what keeps the live view live.
+		flush_interval -1
+	}
+}

@@ -1,0 +1,45 @@
+# An overlay that puts Caddy in front of the console and gets it a
+# certificate. Use it together with the main file, not instead of it:
+#
+#   DISTKV_DOMAIN=distkv.example.org \
+#     docker compose -f docker-compose.yml -f deploy/vm/docker-compose.tls.yml up -d
+#
+# Without this overlay the console is served over plain HTTP on port 8080,
+# which works fine and is a reasonable place to start. This is for when the
+# link is going somewhere people will read it.
+#
+# A domain is required — Let's Encrypt will not issue for a bare IP. A free
+# subdomain from a dynamic-DNS provider is enough; see docs/deploy.md.
+
+services:
+  console:
+    # Re-stated in full because Compose replaces `command` rather than
+    # merging it. The difference from the base file is -trust-proxy-headers:
+    # behind Caddy every request arrives from the same address, so without
+    # it every visitor in the world would share one rate-limit budget.
+    command:
+      - -listen=:8080
+      - -nodes=node1=node1:7070,node2=node2:7070,node3=node3:7070,node4=node4:7070,node5=node5:7070
+      - -web=/srv/console
+      - -auto-heal=5m
+      - -trust-proxy-headers
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    networks: [distkv]
+    depends_on: [console]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Caddy reads this to decide what to get a certificate for.
+      DISTKV_DOMAIN: ${DISTKV_DOMAIN:?set DISTKV_DOMAIN to the hostname this is served on}
+    volumes:
+      - ./deploy/vm/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:
