@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 580" width="940" height="580" role="img" aria-label="Terminal demo: bringing up a five node DistKV cluster, writing and reading a key, then killing a minority and reading it again">
+  <title>DistKV in 30 seconds</title>
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#17335C"/>
+      <stop offset="100%" stop-color="#102647"/>
+    </linearGradient>
+    <clipPath id="win">
+      <rect x="8" y="8" width="924" height="564" rx="14"/>
+    </clipPath>
+    <!-- The transcript is deliberately static. An earlier version revealed
+         it line by line with an animated clipPath, which looked good in a
+         browser but rendered as an empty window anywhere the first frame
+         is what gets captured — thumbnailers, social previews, PDF export.
+         The content is the point; it does not get to depend on animation
+         running. Only the cursor blinks. -->
+  </defs>
+
+  <g clip-path="url(#win)">
+    <rect x="8" y="8" width="924" height="564" fill="#0B1729"/>
+    <rect x="8" y="8" width="924" height="46" fill="url(#chrome)"/>
+    <circle cx="34" cy="31" r="6.5" fill="#FF5F57"/>
+    <circle cx="56" cy="31" r="6.5" fill="#FEBC2E"/>
+    <circle cx="78" cy="31" r="6.5" fill="#28C840"/>
+    <text x="470" y="36" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#8FB4E3">distkv — 5-node cluster</text>
+  </g>
+  <rect x="8" y="8" width="924" height="564" rx="14" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14.5">
+    <g transform="translate(30,0)">
+      <text y="96"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">docker compose up --build -d</tspan></text>
+
+      <text y="122"><tspan fill="#3FB950"> ✔ </tspan><tspan fill="#9FB3C8">Container distkv-node1-1  Started</tspan></text>
+      <text y="148"><tspan fill="#3FB950"> ✔ </tspan><tspan fill="#9FB3C8">Container distkv-node2-1  Started</tspan></text>
+      <text y="174"><tspan fill="#3FB950"> ✔ </tspan><tspan fill="#9FB3C8">Container distkv-node3-1  Started</tspan></text>
+      <text y="200"><tspan fill="#3FB950"> ✔ </tspan><tspan fill="#9FB3C8">Container distkv-node4-1  Started</tspan></text>
+      <text y="226"><tspan fill="#3FB950"> ✔ </tspan><tspan fill="#9FB3C8">Container distkv-node5-1  Started</tspan></text>
+
+      <text y="252"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">distkv-cli -endpoints node1:7070 put city kathmandu</tspan></text>
+      <text y="278"><tspan fill="#3FB950" font-weight="700">OK</tspan></text>
+
+      <text y="304"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">distkv-cli -endpoints node1:7070 append city -nepal</tspan></text>
+      <text y="330"><tspan fill="#3FB950" font-weight="700">OK</tspan></text>
+
+      <text y="356"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">distkv-cli -endpoints node1:7070 get city</tspan></text>
+      <text y="382"><tspan fill="#FFD166" font-weight="700">kathmandu-nepal</tspan></text>
+
+      <text y="416"><tspan fill="#6E7F94"># now kill a minority — 2 of 5 — and read it again</tspan></text>
+      <text y="442"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">docker compose stop node1 node2</tspan></text>
+      <text y="468"><tspan fill="#9FB3C8"> ✔ Container distkv-node1-1  Stopped</tspan></text>
+      <text y="494"><tspan fill="#9FB3C8"> ✔ Container distkv-node2-1  Stopped</tspan></text>
+
+      <text y="520"><tspan fill="#58A6FF" font-weight="700">$ </tspan><tspan fill="#E6EDF3">distkv-cli -endpoints node3:7070 get city</tspan></text>
+      <text y="546"><tspan fill="#FFD166" font-weight="700">kathmandu-nepal</tspan><tspan fill="#3FB950">   ← still serving</tspan></text>
+    </g>
+  </g>
+
+  <rect x="30" y="560" width="9" height="3" fill="#58A6FF">
+    <animate attributeName="opacity" values="1;1;0;0" dur="1.06s" repeatCount="indefinite"/>
+  </rect>
+</svg>

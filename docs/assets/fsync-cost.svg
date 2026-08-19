@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 300" width="940" height="300" role="img" aria-label="Durability cost: 22650 operations per second with in-memory state versus 172 operations per second with a fsynced write-ahead log, a 131 times drop">
+  <title>What fsync costs</title>
+  <defs>
+    <linearGradient id="fast" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1D63ED"/>
+      <stop offset="100%" stop-color="#67E8F9"/>
+    </linearGradient>
+    <linearGradient id="slow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="940" height="300" rx="16" fill="#0B1729"/>
+  <rect width="940" height="300" rx="16" fill="none" stroke="#1E3A5F"/>
+
+  <text x="34" y="46" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E6EDF3">What durability actually costs</text>
+  <text x="34" y="70" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" fill="#8FB4E3">Same mixed workload, 3 nodes. One fsync per entry, no group commit.</text>
+
+  <g font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.5" font-weight="600">
+    <text x="228" y="126" text-anchor="end" fill="#C9D8EA">in-memory state</text>
+    <rect x="244" y="108" width="620" height="26" rx="5" fill="url(#fast)"/>
+    <text x="258" y="126" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="700" fill="#04203F">22,650 op/s</text>
+
+    <text x="228" y="186" text-anchor="end" fill="#C9D8EA">fsynced WAL</text>
+    <rect x="244" y="168" width="6" height="26" rx="2" fill="url(#slow)"/>
+    <text x="262" y="186" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="700" fill="#F59E0B">172 op/s</text>
+  </g>
+
+  <g transform="translate(700,152)">
+    <rect x="0" y="0" width="200" height="60" rx="12" fill="#2A1607" stroke="#B45309"/>
+    <text x="100" y="28" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="800" fill="#F59E0B">131×</text>
+    <text x="100" y="48" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" fill="#D5A15A">slower, and honest about it</text>
+  </g>
+
+  <g transform="translate(34,232)">
+    <rect width="880" height="44" rx="8" fill="#12233C"/>
+    <text x="14" y="19" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" fill="#8FB4E3">
+      Every log entry pays for its own fsync. Batching concurrent proposals into a single one is the highest-value
+    </text>
+    <text x="14" y="35" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" fill="#8FB4E3">
+      optimisation left in the codebase — documented in the limitations rather than buried.
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380" role="img" aria-label="DistKV — a fault-tolerant, sharded, distributed key-value store with Raft written from scratch">
+  <title>DistKV</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A1B33"/>
+      <stop offset="48%" stop-color="#0C3A85"/>
+      <stop offset="100%" stop-color="#1D63ED"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="62%" stop-color="#CFE4FF"/>
+      <stop offset="100%" stop-color="#7DD3FC"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7DD3FC" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7DD3FC" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.6" cy="1.6" r="1.6" fill="#FFFFFF" opacity="0.055"/>
+    </pattern>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <clipPath id="card">
+      <rect x="0" y="0" width="1200" height="380" rx="26"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="380" fill="url(#sky)"/>
+    <rect width="1200" height="380" fill="url(#dots)"/>
+    <ellipse cx="1010" cy="70" rx="230" ry="150" fill="#38BDF8" opacity="0.20" filter="url(#soft)"/>
+    <ellipse cx="180" cy="360" rx="220" ry="130" fill="#1D63ED" opacity="0.30" filter="url(#soft)"/>
+
+    <!-- five nodes, one leader: the cluster this thing is -->
+    <g transform="translate(905,150)" opacity="0.95">
+      <g stroke="#7DD3FC" stroke-width="1.4" opacity="0.45">
+        <line x1="0" y1="0" x2="-92" y2="-52"/>
+        <line x1="0" y1="0" x2="92" y2="-52"/>
+        <line x1="0" y1="0" x2="-92" y2="52"/>
+        <line x1="0" y1="0" x2="92" y2="52"/>
+      </g>
+      <circle cx="-92" cy="-52" r="15" fill="#0A1B33" stroke="#7DD3FC" stroke-width="2.2"/>
+      <circle cx="92" cy="-52" r="15" fill="#0A1B33" stroke="#7DD3FC" stroke-width="2.2"/>
+      <circle cx="-92" cy="52" r="15" fill="#0A1B33" stroke="#7DD3FC" stroke-width="2.2"/>
+      <circle cx="92" cy="52" r="15" fill="#0A1B33" stroke="#7DD3FC" stroke-width="2.2"/>
+      <circle cx="0" cy="0" r="25" fill="#1D63ED" stroke="#BAE6FD" stroke-width="3"/>
+      <text x="0" y="5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">L</text>
+    </g>
+
+    <g transform="translate(84,0)">
+      <text x="0" y="152" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="104" font-weight="800" letter-spacing="-3.5" fill="url(#ink)">DistKV</text>
+      <rect x="4" y="176" width="320" height="3" rx="1.5" fill="url(#rule)"/>
+
+      <text x="4" y="222" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="23" font-weight="500" fill="#D7E7FF">
+        A fault-tolerant, sharded, distributed key-value store.
+      </text>
+      <text x="4" y="256" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="23" font-weight="700" fill="#7DD3FC">
+        Raft written from scratch — no consensus library.
+      </text>
+
+      <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14" font-weight="600">
+        <g transform="translate(4,292)">
+          <rect width="248" height="38" rx="19" fill="#FFFFFF" opacity="0.08"/>
+          <rect width="248" height="38" rx="19" fill="none" stroke="#7DD3FC" stroke-opacity="0.45"/>
+          <circle cx="24" cy="19" r="4.5" fill="#3FB950"/>
+          <text x="40" y="24" fill="#EAF4FF">576,528 ops linearizable</text>
+        </g>
+        <g transform="translate(268,292)">
+          <rect width="196" height="38" rx="19" fill="#FFFFFF" opacity="0.08"/>
+          <rect width="196" height="38" rx="19" fill="none" stroke="#7DD3FC" stroke-opacity="0.45"/>
+          <circle cx="24" cy="19" r="4.5" fill="#3FB950"/>
+          <text x="40" y="24" fill="#EAF4FF">10 min under -race</text>
+        </g>
+        <g transform="translate(480,292)">
+          <rect width="168" height="38" rx="19" fill="#FFFFFF" opacity="0.08"/>
+          <rect width="168" height="38" rx="19" fill="none" stroke="#7DD3FC" stroke-opacity="0.45"/>
+          <circle cx="24" cy="19" r="4.5" fill="#3FB950"/>
+          <text x="40" y="24" fill="#EAF4FF">zero violations</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

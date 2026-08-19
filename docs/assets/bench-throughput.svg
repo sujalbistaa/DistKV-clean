@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" width="940" height="430" role="img" aria-label="Throughput by workload: read-heavy 26391, write-heavy 25220, mixed 25693 operations per second at 3 nodes; read-heavy 27125, write-heavy 27948, mixed 27972 at 5 nodes">
+  <title>Throughput by workload and cluster size</title>
+  <defs>
+    <linearGradient id="bar3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1D63ED"/>
+      <stop offset="100%" stop-color="#3B9BFF"/>
+    </linearGradient>
+    <linearGradient id="bar5" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#67E8F9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="940" height="430" rx="16" fill="#0B1729"/>
+  <rect width="940" height="430" rx="16" fill="none" stroke="#1E3A5F"/>
+
+  <text x="34" y="46" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E6EDF3">Throughput by workload</text>
+  <text x="34" y="70" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" fill="#8FB4E3">16 concurrent clients · 500µs simulated link · in-memory state · Apple M3</text>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12.5">
+    <g transform="translate(700,44)">
+      <rect width="13" height="13" rx="3" fill="url(#bar3)"/>
+      <text x="20" y="11" fill="#9FB3C8">3 nodes</text>
+      <rect x="96" width="13" height="13" rx="3" fill="url(#bar5)"/>
+      <text x="116" y="11" fill="#9FB3C8">5 nodes</text>
+    </g>
+  </g>
+
+  <!-- gridlines at 10k / 20k / 30k; scale: 30000 ops => 610px -->
+  <g stroke="#1E3A5F" stroke-width="1">
+    <line x1="212" y1="104" x2="212" y2="330"/>
+    <line x1="415" y1="104" x2="415" y2="330" stroke-dasharray="3 5"/>
+    <line x1="618" y1="104" x2="618" y2="330" stroke-dasharray="3 5"/>
+    <line x1="822" y1="104" x2="822" y2="330" stroke-dasharray="3 5"/>
+  </g>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11" fill="#6E7F94" text-anchor="middle">
+    <text x="212" y="348">0</text>
+    <text x="415" y="348">10k</text>
+    <text x="618" y="348">20k</text>
+    <text x="822" y="348">30k</text>
+  </g>
+
+  <g font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.5" font-weight="600">
+    <!-- read-heavy -->
+    <text x="196" y="132" text-anchor="end" fill="#C9D8EA">read-heavy</text>
+    <rect x="212" y="118" width="536" height="18" rx="4" fill="url(#bar3)"/>
+    <text x="758" y="132" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">26,391</text>
+    <rect x="212" y="140" width="551" height="18" rx="4" fill="url(#bar5)"/>
+    <text x="773" y="154" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">27,125</text>
+
+    <!-- write-heavy -->
+    <text x="196" y="212" text-anchor="end" fill="#C9D8EA">write-heavy</text>
+    <rect x="212" y="198" width="512" height="18" rx="4" fill="url(#bar3)"/>
+    <text x="734" y="212" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">25,220</text>
+    <rect x="212" y="220" width="568" height="18" rx="4" fill="url(#bar5)"/>
+    <text x="790" y="234" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">27,948</text>
+
+    <!-- mixed -->
+    <text x="196" y="292" text-anchor="end" fill="#C9D8EA">mixed</text>
+    <rect x="212" y="278" width="522" height="18" rx="4" fill="url(#bar3)"/>
+    <text x="744" y="292" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">25,693</text>
+    <rect x="212" y="300" width="568" height="18" rx="4" fill="url(#bar5)"/>
+    <text x="790" y="314" font-size="12.5" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" fill="#9FB3C8">27,972</text>
+  </g>
+
+  <g transform="translate(34,370)">
+    <rect width="872" height="32" rx="8" fill="#12233C"/>
+    <text x="14" y="21" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" fill="#8FB4E3">
+      Reads cost the same as writes — by design. They go through the log, which makes a stale read impossible rather than unlikely.
+    </text>
+  </g>
+</svg>
