@@ -1,0 +1,12 @@
+/bin/
+*.test
+*.out
+.DS_Store
+
+# The console's dependencies and build output. package-lock.json is
+# committed; node_modules and dist are produced from it, in the image.
+web/node_modules/
+web/dist/
+
+# Stray screenshots dropped into the tree by the IDE
+Screenshot*.png

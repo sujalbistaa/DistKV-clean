@@ -1,0 +1,11 @@
+# Build artefacts and dependencies are produced inside the image, never
+# copied into it. Sending them would bloat the context and, worse, risk a
+# host-built node_modules ending up in a linux image.
+.git
+bin/
+web/node_modules/
+web/dist/
+docs/assets/
+*.test
+*.out
+.DS_Store
