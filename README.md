@@ -6,7 +6,6 @@
 
 [![Live demo](https://img.shields.io/badge/live%20demo-crash%20a%20real%20cluster-0F172A?style=for-the-badge)](http://34.240.41.1:8080)
 
-[![CI](https://github.com/sujalbistaa/DistKV/actions/workflows/ci.yml/badge.svg)](https://github.com/sujalbistaa/DistKV/actions/workflows/ci.yml)
 
 ![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![Raft](https://img.shields.io/badge/Raft-from%20scratch-4F46E5?style=for-the-badge)
