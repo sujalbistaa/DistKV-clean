@@ -1,0 +1,22 @@
+{
+  "shards": [
+    {
+      "id": 1,
+      "start": "",
+      "end": "m",
+      "replicas": ["s1n1", "s1n2", "s1n3"]
+    },
+    {
+      "id": 2,
+      "start": "m",
+      "end": "t",
+      "replicas": ["s2n1", "s2n2", "s2n3"]
+    },
+    {
+      "id": 3,
+      "start": "t",
+      "end": "",
+      "replicas": ["s3n1", "s3n2", "s3n3"]
+    }
+  ]
+}
