@@ -1,0 +1,753 @@
+/*
+  One stylesheet, no framework. The console is a instrument panel, so the
+  rules it follows are the ones instrument panels follow: a single neutral
+  ground, hairline structure instead of shadows, numbers in a monospace
+  face so columns of them line up and a changing digit doesn't shift its
+  neighbours, and colour reserved for the three states that actually mean
+  something — leading, down, cut off. Everything else is typography.
+*/
+
+:root {
+  --canvas: #fbfbfa;
+  --paper: #ffffff;
+  --paper-sunken: #f7f6f4;
+
+  --ink: #1a1a19;
+  --ink-2: #56544f;
+  --ink-3: #8c8983;
+
+  --rule: #e7e4de;
+  --rule-strong: #d6d2ca;
+
+  /* The only three hues in the design, all desaturated, all used as
+     1px marks and small text rather than as fills. */
+  --lead: #23458f;
+  --lead-wash: #eef1f8;
+  --down: #91302c;
+  --down-wash: #f9efee;
+  --cut: #7d5c14;
+  --cut-wash: #f8f3e7;
+
+  --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter,
+    Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --radius: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+a:hover {
+  border-bottom-color: var(--ink);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- layout ---------- */
+
+.shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 28px 72px;
+}
+
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.masthead-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 28px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.wordmark {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tagline {
+  margin-top: 3px;
+  color: var(--ink-2);
+  font-size: 13px;
+  max-width: 62ch;
+}
+
+.masthead-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.stack {
+  display: grid;
+  gap: 20px;
+}
+
+/* ---------- panels ---------- */
+
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.panel-note {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.panel-body {
+  padding: 16px;
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- stat strip ---------- */
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stat {
+  padding: 13px 16px 14px;
+  border-left: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.stat:first-child {
+  border-left: none;
+}
+
+.stat-value {
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.stat.is-warning .stat-value {
+  color: var(--down);
+}
+
+/* ---------- node table ---------- */
+
+/* The table can outgrow its column on a narrow window — a long node
+   address, a wide status. It scrolls inside its own panel rather than
+   pushing the page sideways. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  padding: 9px 16px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.num {
+  text-align: right;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.node-id {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.node-addr {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+tr.is-leader .node-id {
+  color: var(--lead);
+}
+
+tr.is-down {
+  background: var(--down-wash);
+}
+
+tr.is-cut {
+  background: var(--cut-wash);
+}
+
+/* Role is set as small caps text with a single dot, rather than a pill:
+   five rounded badges in a column read as decoration, and the eye only
+   needs to find one of them. */
+.role {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--ink-3);
+  flex-shrink: 0;
+}
+
+.role.leader {
+  color: var(--lead);
+  font-weight: 600;
+}
+
+.role.leader .dot {
+  background: var(--lead);
+  border-color: var(--lead);
+}
+
+.role.candidate .dot {
+  background: var(--ink-3);
+}
+
+.role.down {
+  color: var(--down);
+}
+
+.role.down .dot {
+  border-color: var(--down);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--down),
+    var(--down) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+.flag {
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--cut);
+  white-space: nowrap;
+}
+
+/* Replication: how far this follower has been driven towards the leader's
+   last index. A bar rather than a number because the useful reading is
+   "behind or not", at a glance, across five rows. */
+.repl {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 116px;
+}
+
+.repl-track {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* Caught up is the normal state and is drawn quietly: five dark bars in a
+   column would shout the least interesting thing on the page. Falling
+   behind is what deserves the ink. */
+.repl-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--rule-strong);
+  transition: width 140ms linear;
+}
+
+.repl-fill.behind {
+  background: var(--cut);
+}
+
+.repl-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  min-width: 34px;
+  text-align: right;
+}
+
+/* ---------- controls ---------- */
+
+.controls {
+  display: grid;
+  gap: 14px;
+}
+
+.control-group {
+  display: grid;
+  gap: 8px;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  padding: 7px 12px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--paper-sunken);
+  border-color: var(--ink-3);
+}
+
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #333330;
+  border-color: #333330;
+}
+
+.btn-danger {
+  color: var(--down);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--down-wash);
+  border-color: var(--down);
+}
+
+.btn-small {
+  padding: 4px 9px;
+  font-size: 12px;
+}
+
+.btn-node {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 9px;
+}
+
+.btn-node.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+
+/* ---------- key-value console ---------- */
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: grid;
+  gap: 5px;
+  flex: 1;
+  min-width: 140px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(26, 26, 25, 0.06);
+}
+
+input[type="text"]::placeholder {
+  color: #b6b2ab;
+}
+
+/* The request trace: one row per node the client had to talk to. This is
+   the part worth reading — it is the leader redirect, the failover, and
+   the retry, written down. */
+.trace {
+  margin-top: 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.trace-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  background: var(--paper-sunken);
+  border-bottom: 1px solid var(--rule);
+  font-size: 12px;
+}
+
+.trace-head.failed {
+  background: var(--down-wash);
+  color: var(--down);
+}
+
+.hop {
+  display: grid;
+  grid-template-columns: 18px 82px 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 12px;
+}
+
+.hop:last-child {
+  border-bottom: none;
+}
+
+.hop-index {
+  font-family: var(--mono);
+  color: var(--ink-3);
+}
+
+.hop-node {
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.hop-detail {
+  color: var(--ink-2);
+  min-width: 0;
+}
+
+.hop-detail .outcome {
+  font-weight: 500;
+}
+
+.hop.ok .outcome {
+  color: var(--lead);
+}
+
+.hop.unreachable .outcome,
+.hop.refused .outcome {
+  color: var(--down);
+}
+
+.hop.redirected .outcome {
+  color: var(--cut);
+}
+
+.hop-time {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.result-line {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--paper-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.error-line {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--down-wash);
+  border: 1px solid #e8cfcd;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--down);
+  line-height: 1.45;
+}
+
+/* ---------- event log ---------- */
+
+.log {
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.log-row {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 10px;
+  padding: 8px 16px 8px 13px;
+  border-bottom: 1px solid var(--rule);
+  border-left: 3px solid transparent;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.log-row:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  padding-top: 1px;
+}
+
+.log-row.election {
+  border-left-color: var(--lead);
+}
+
+.log-row.lifecycle,
+.log-row.quorum {
+  border-left-color: var(--down);
+}
+
+.log-row.network {
+  border-left-color: var(--cut);
+}
+
+.log-row.write {
+  border-left-color: var(--rule-strong);
+}
+
+.log-empty {
+  padding: 22px 16px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+
+/* ---------- connection status ---------- */
+
+.conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.conn .dot {
+  background: var(--lead);
+  border-color: var(--lead);
+}
+
+.conn.offline {
+  color: var(--down);
+}
+
+.conn.offline .dot {
+  background: var(--down);
+  border-color: var(--down);
+}
+
+/* ---------- explainer + footer ---------- */
+
+.explainer {
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.explainer strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.colophon {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+
+@media (max-width: 1000px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
+    border-left: 1px solid var(--rule);
+    border-top: 1px solid var(--rule);
+  }
+
+  .stat:nth-child(odd) {
+    border-left: none;
+  }
+
+  .stat:nth-child(-n + 2) {
+    border-top: none;
+  }
+
+  .masthead-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 620px) {
+  .shell,
+  .masthead-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .repl {
+    display: none;
+  }
+}
