@@ -1,0 +1,35 @@
+DistKV benchmark results — 2026-08-10T18:46:49+05:30
+
+Per-run duration 5s, 16 concurrent clients, 100 keys, 64-byte values,
+simulated one-way link latency 500µs, in-memory storage.
+
+## Throughput and latency by workload
+
+```
+read-heavy   nodes=3 clients=16 ops=132025 errors=   0 throughput= 26391.3 op/s  p50=   581µs p95=   664µs p99=     1ms max= 13.21ms
+write-heavy  nodes=3 clients=16 ops=126171 errors=   0 throughput= 25220.6 op/s  p50=   580µs p95=   683µs p99=  1.28ms max=2.00263s
+mixed        nodes=3 clients=16 ops=128545 errors=   0 throughput= 25693.7 op/s  p50=   585µs p95=   723µs p99=  1.34ms max= 17.71ms
+read-heavy   nodes=5 clients=16 ops=135692 errors=   0 throughput= 27125.4 op/s  p50=   561µs p95=   631µs p99=   730µs max=2.00305s
+write-heavy  nodes=5 clients=16 ops=139809 errors=   0 throughput= 27948.1 op/s  p50=   559µs p95=   630µs p99=   711µs max=  7.41ms
+mixed        nodes=5 clients=16 ops=140075 errors=   0 throughput= 27972.0 op/s  p50=   556µs p95=   624µs p99=   717µs max=  8.39ms
+```
+
+## Durability cost: in-memory state vs. fsynced write-ahead log
+
+3 nodes, 16 clients, mixed workload, 5s per run.
+
+```
+mixed/memory nodes=3 clients=16 ops=113313 errors=   0 throughput= 22650.3 op/s  p50=   597µs p95=   735µs p99=  1.19ms max=2.00269s
+mixed/wal-fsync nodes=3 clients=16 ops=   873 errors=   0 throughput=   172.4 op/s  p50=    83ms p95=136.36ms p99=164.26ms max=2.10981s
+```
+
+The fsynced run does the same consensus work plus a real `fsync` on every
+appended entry before it is acknowledged.
+
+## Leader re-election after leader crash
+
+5 nodes, 20 trials, election timeout 30-60ms, heartbeat 10ms, tick 3ms.
+
+```
+n=20 min=30.99ms p50=39.71ms p95=51.39ms p99=51.39ms max=51.39ms mean=39.71ms
+```
