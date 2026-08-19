@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package distkv;
+
+option go_package = "github.com/sujalbistaa/DistKV/proto/distkvpb";
+
+enum Op {
+  OP_UNSPECIFIED = 0;
+  OP_GET = 1;
+  OP_PUT = 2;
+  OP_APPEND = 3;
+  OP_DELETE = 4;
+}
+
+// Command is both a client request and, marshaled as-is, the payload
+// proposed to the Raft log: the same bytes a client sends are what the
+// state machine later decodes when applying the committed entry.
+//
+// client_id must be a value the client generates once per session (e.g.
+// a random token) and seq_no must increase by exactly 1 with every
+// request sent in that session, including Get. The state machine uses
+// (client_id, seq_no) to deduplicate retried Put/Append/Delete requests
+// and to let a client tell whether the entry that landed at the log index
+// its request was assigned is really its own request or a different
+// leader's request that overwrote it after a failover.
+message Command {
+  string client_id = 1;
+  uint64 seq_no = 2;
+  Op op = 3;
+  string key = 4;
+  string value = 5;
+}
+
+message CommandReply {
+  bool success = 1;
+  string value = 2;
+  bool found = 3; // for Get: whether the key existed
+  string error = 4;
+  // leader_hint is set when success is false because this node isn't
+  // leader; it names the node the client should retry against, if known.
+  string leader_hint = 5;
+  // index is the log index this request was committed at, on a successful
+  // reply from a leader. It is not part of the state machine's answer —
+  // it exists so a caller can point at exactly where in the replicated log
+  // its request landed.
+  uint64 index = 6;
+}
+
+message SessionState {
+  uint64 seq_no = 1;
+  CommandReply reply = 2;
+}
+
+// Snapshot is the KV state machine's entire state, as passed to and from
+// raft.Node.Snapshot/delivered on ApplyCh's SnapshotValid messages.
+message Snapshot {
+  map<string, string> data = 1;
+  map<string, SessionState> sessions = 2;
+}
+
+service KV {
+  rpc Get(Command) returns (CommandReply);
+  rpc Put(Command) returns (CommandReply);
+  rpc Append(Command) returns (CommandReply);
+  rpc Delete(Command) returns (CommandReply);
+}

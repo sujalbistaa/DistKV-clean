@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package distkv;
+
+option go_package = "github.com/sujalbistaa/DistKV/proto/distkvpb";
+
+// The Admin service exposes a node's internal Raft state for monitoring,
+// and the fault injection that the test suite performs through the fake
+// network (see internal/transport.Network) as something an operator — or
+// the demo console — can drive against a real cluster.
+//
+// Nothing here is part of the replicated state machine, and no method on
+// this service can change the contents of the log. Crash and Restart tear
+// down and rebuild the node from its own write-ahead log, so a restarted
+// node recovers exactly the way it would after `kill -9` and a fresh
+// process start.
+
+// Lifecycle is whether a node is currently participating in consensus.
+enum Lifecycle {
+  LIFECYCLE_UNSPECIFIED = 0;
+  // RUNNING: the Raft node exists and is ticking.
+  LIFECYCLE_RUNNING = 1;
+  // CRASHED: the Raft node has been torn down and its storage closed.
+  // Its durable state is untouched and Restart recovers from it.
+  LIFECYCLE_CRASHED = 2;
+}
+
+message FollowerProgress {
+  uint64 next_index = 1;
+  uint64 match_index = 2;
+}
+
+message NodeStatus {
+  string id = 1;
+  Lifecycle lifecycle = 2;
+
+  // role is "follower", "candidate", or "leader"; empty while crashed.
+  string role = 3;
+  uint64 term = 4;
+  string leader_id = 5;
+
+  uint64 commit_index = 6;
+  uint64 last_applied = 7;
+  uint64 last_log_index = 8;
+  uint64 log_len = 9;
+  uint64 last_included_index = 10;
+  uint64 last_included_term = 11;
+
+  // followers is the leader's nextIndex/matchIndex bookkeeping, keyed by
+  // peer id. It is empty on a node that isn't leader.
+  map<string, FollowerProgress> followers = 12;
+
+  // isolated_from names the peers this node is currently refusing to
+  // exchange Raft traffic with, in both directions — a simulated network
+  // partition, not a change of membership.
+  repeated string isolated_from = 13;
+
+  // key_count is how many keys the state machine currently holds, and
+  // uptime_ms how long the current incarnation of the node has been
+  // running (reset by Crash/Restart, not by leader changes).
+  uint64 key_count = 14;
+  uint64 uptime_ms = 15;
+}
+
+message StatusRequest {}
+
+message SetPartitionRequest {
+  // peers is the complete set this node should refuse traffic with,
+  // replacing any previous set. An empty list heals the node.
+  repeated string peers = 1;
+}
+
+message LifecycleRequest {}
+
+message LifecycleReply {
+  Lifecycle lifecycle = 1;
+  string error = 2;
+}
+
+service Admin {
+  rpc Status(StatusRequest) returns (NodeStatus);
+  rpc SetPartition(SetPartitionRequest) returns (NodeStatus);
+  // Crash tears the node down without touching its durable state, the way
+  // a kill -9 would. Restart brings it back by replaying its write-ahead
+  // log and most recent snapshot.
+  rpc Crash(LifecycleRequest) returns (LifecycleReply);
+  rpc Restart(LifecycleRequest) returns (LifecycleReply);
+}
