@@ -1,0 +1,81 @@
+name: CI
+
+# Consensus bugs are timing bugs, and timing bugs are the ones that pass on
+# the machine they were written on. Running the suite under -race on a
+# different, busier, differently-scheduled machine on every push is the
+# cheapest way to find out that an election timeout only ever held because
+# a laptop happened to be idle.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  go:
+    name: Go — vet, format, race
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "These files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build ./...
+
+      # The race detector is the point of this job. The suite runs a real
+      # five-node cluster over loopback and a fault-injecting fake network,
+      # so it is genuinely concurrent, and a data race in the consensus code
+      # would be found here rather than in production.
+      - name: go test -race
+        run: go test -race -count=1 -timeout 20m ./...
+
+  console:
+    name: Console — typecheck and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: npm ci
+        working-directory: web
+        run: npm ci
+
+      # `npm run build` runs tsc --noEmit before vite, so this fails on a
+      # type error as well as on a broken bundle.
+      - name: build
+        working-directory: web
+        run: npm run build
+
+  image:
+    name: Image — docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Built but not pushed anywhere: this is here so that a change which
+      # compiles locally but breaks the deployment is caught at the point it
+      # is made, rather than on a virtual machine at the worst moment.
+      - name: docker build
+        run: docker build -t distkv:ci .
